@@ -1,0 +1,42 @@
+version: "3.8"
+
+services:
+  backend:
+    build: ./e-commerce-backend
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - DB_HOST=databaseaja.c7oyg62ikc60.ap-southeast-2.rds.amazonaws.com
+      - DB_PORT=3306
+      - DB_NAME=ecommers
+      - DB_USER=admin
+      - DB_PASSWORD=zxt20net
+      - AWS_REGION=ap-southeast-2b
+      - AWS_ACCESS_KEY_ID=AKIAXKWVX33HDRYUNFUT
+      - AWS_SECRET_ACCESS_KEY=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
+      - AWS_S3_BUCKET_NAME=mulaibucket
+      - JWT_SECRET=60e989494607fb0f0d341e2661ee847de4c5593ac64bd25003d081cb42e418954b1a689cd3d3a21290173cb2ab69d5f2cb0670f52d357404f592da1bf28b630b
+    depends_on:
+      - db
+
+  frontend:
+    build: ./e-commerce-frontend
+    ports:
+      - "80:80"
+
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: ecommerce_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:

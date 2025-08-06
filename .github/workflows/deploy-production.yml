@@ -1,0 +1,24 @@
+name: Deploy to Production
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Deploy backend to production server
+        run: |
+          echo "Deploy backend to production server"
+          # Add your deployment script or commands here
+
+      - name: Deploy frontend to production server
+        run: |
+          echo "Deploy frontend to production server"
+          # Add your deployment script or commands here

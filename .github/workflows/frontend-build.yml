@@ -1,0 +1,29 @@
+name: Frontend Build and Test
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: cd e-commerce-frontend && npm ci
+
+      - name: Run linting
+        run: cd e-commerce-frontend && npm run lint
+
+      - name: Build application
+        run: cd e-commerce-frontend && npm run build

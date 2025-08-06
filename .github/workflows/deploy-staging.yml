@@ -1,0 +1,47 @@
+name: Deploy to Staging
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  deploy-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy backend to EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no ubuntu@3.25.135.175 << 'ENDSSH'
+            cd ~/e-commerce-backend
+            git pull origin develop
+            docker-compose -f docker-compose.backend.yml down
+            docker-compose -f docker-compose.backend.yml up --build -d
+          ENDSSH
+
+  deploy-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy frontend to EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no ubuntu@3.107.55.186 << 'ENDSSH'
+            cd ~/e-commerce-frontend
+            git pull origin develop
+            docker-compose -f docker-compose.frontend.yml down
+            docker-compose -f docker-compose.frontend.yml up --build -d
+          ENDSSH

@@ -1,0 +1,70 @@
+name: Deploy to EC2
+on: [push]
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 14
+
+      - name: Install Dependencies
+        run: |
+          cd backend && npm install
+          cd ../frontend && npm install
+
+      - name: Run Tests
+        run: |
+          cd backend && npm test
+          cd ../frontend && npm test
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and Push Backend
+        run: |
+          docker build -t ajirahmannugraha/backend:latest ./backend
+          docker push ajirahmannugraha/backend:latest
+
+      - name: Build and Push Frontend
+        run: |
+          docker build -t ajirahmannugraha/frontend:latest ./frontend
+          docker push ajirahmannugraha/frontend:latest
+
+      - name: Deploy to Frontend Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_FRONTEND_IP }}
+          username: ec2-user
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            docker pull ajirahmannugraha/frontend:latest
+            docker stop frontend || true
+            docker rm frontend || true
+            docker run -d --name frontend -p 80:80 \
+              -v /home/ec2-user/nginx.conf:/etc/nginx/conf.d/default.conf \
+              ajirahmannugraha/frontend:latest
+
+      - name: Deploy to Backend Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_BACKEND_IP }} # Via Bastion/SSH tunneling
+          username: ec2-user
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            docker pull your-dockerhub/backend:latest
+            docker stop backend || true
+            docker rm backend || true
+            docker run -d --name backend -p 3000:3000 \
+              -e DB_HOST=database-ecommers.c7oyg62ikc60.ap-southeast-2.rds.amazonaws.com \
+              -e DB_USER=admin \
+              -e DB_PASSWORD=zxt20net \
+              ajirahmannugraha/backend:latest

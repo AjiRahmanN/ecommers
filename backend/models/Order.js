@@ -78,4 +78,4 @@ const OrderItem = sequelize.define("OrderItem", {
   },
 });
 
-module.exports = { Order, OrderItem };
+module.exports = Order;

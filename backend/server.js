@@ -10,7 +10,30 @@ const checkoutRoutes = require("./routes/checkout");
 const adminRoutes = require("./routes/admin");
 
 const app = express();
-app.use(cors());
+
+// Configure CORS to allow requests from frontend
+app.use(
+  cors({
+    origin: ["http://13.211.55.73", "http://localhost:5173", "http://localhost:3000"],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
+// Handle preflight requests
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+
+  if (req.method === "OPTIONS") {
+    res.sendStatus(200);
+  } else {
+    next();
+  }
+});
+
 app.use(bodyParser.json());
 app.use("/api", userRoutes);
 app.use("/api/auth", authRoutes);

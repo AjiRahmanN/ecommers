@@ -21,8 +21,9 @@ jobs:
 
       - name: Run Tests
         run: |
-          cd backend && npm test
+          cd backend
           chmod +x ./node_modules/.bin/jest
+          npm test
           cd ../frontend && npm test
 
       - name: Login to Docker Hub

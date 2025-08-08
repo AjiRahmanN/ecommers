@@ -49,10 +49,10 @@ jobs:
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            docker pull ajirahmannugraha/frontend:latest
-            docker stop frontend || true
-            docker rm frontend || true
-            docker run -d --name frontend -p 80:80 \
+            sudo docker pull ajirahmannugraha/frontend:latest
+            sudo docker stop frontend || true
+            sudo docker rm frontend || true
+            sudo docker run -d --name frontend -p 80:80 \
               -v /home/ec2-user/nginx.conf:/etc/nginx/conf.d/default.conf \
               ajirahmannugraha/frontend:latest
 
@@ -63,10 +63,10 @@ jobs:
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            docker pull ajirahmannugraha/backend:latest
-            docker stop backend || true
-            docker rm backend || true
-            docker run -d --name backend -p 3000:3000 \
+            sudo docker pull ajirahmannugraha/backend:latest
+            sudo docker stop backend || true
+            sudo docker rm backend || true
+            sudo docker run -d --name backend -p 3000:3000 \
               -e DB_HOST=database-ecommers.c7oyg62ikc60.ap-southeast-2.rds.amazonaws.com \
               -e DB_USER=admin \
               -e DB_PASSWORD=zxt20net \

@@ -11,7 +11,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: 14
+          node-version: 18
 
       - name: Install Dependencies
         run: |
@@ -44,7 +44,7 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_FRONTEND_IP }}
-          username: ec2-user
+          username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             docker pull ajirahmannugraha/frontend:latest
@@ -58,10 +58,10 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_BACKEND_IP }} # Via Bastion/SSH tunneling
-          username: ec2-user
+          username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            docker pull your-dockerhub/backend:latest
+            docker pull ajirahmannugraha/backend:latest
             docker stop backend || true
             docker rm backend || true
             docker run -d --name backend -p 3000:3000 \

@@ -67,5 +67,5 @@ jobs:
             sudo docker run -d --name backend -p 3000:3000 \
               -e DB_HOST=database-ecommers.c7oyg62ikc60.ap-southeast-2.rds.amazonaws.com \
               -e DB_USER=admin \
-              -e DB_PASSWORD=zxt20net \
+              -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
               ajirahmannugraha/backend:latest

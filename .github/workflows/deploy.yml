@@ -17,6 +17,7 @@ jobs:
         run: |
           cd backend && npm install
           cd ../frontend && npm install
+          npm install react-scripts --save-dev
 
       - name: Run Tests
         run: |

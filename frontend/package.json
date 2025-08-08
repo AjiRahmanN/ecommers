@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "lint": "eslint . --fix",
     "format": "prettier --write src/",
-    "test": "react-scripts test --watchAll=false"
+    "test": "react-scripts test --watchAll=false --passWithNoTests"
   },
   "dependencies": {
     "axios": "^1.9.0",

@@ -26,6 +26,8 @@ import { RouterLink, RouterView } from 'vue-router'
 </template>
 
 <style scoped>
+/* hahaha */
+
 #app {
   display: flex;
   flex-direction: column;

@@ -12,22 +12,32 @@ router.get("/products", async (req, res) => {
   try {
     const products = await Product.findAll({
       where: { isActive: true },
-      include: ["seller"],
+      include: [
+        {
+          model: require("../models").User,
+          as: "User",
+          attributes: ["id", "name", "email"],
+        },
+      ],
     });
 
     // Generate signed URLs for images
     const productsWithUrls = await Promise.all(
       products.map(async (product) => {
         const productData = product.toJSON();
-        if (product.imageKey) {
-          productData.imageUrl = await s3Service.getSignedUrl(product.imageKey);
+        if (productData.imageKey) {
+          productData.imageUrl = await s3Service.getSignedUrl(productData.imageKey);
         }
+        // Rename User to seller for frontend compatibility
+        productData.seller = productData.User;
+        delete productData.User;
         return productData;
       })
     );
 
     res.json(productsWithUrls);
   } catch (error) {
+    console.error("Error fetching products:", error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -36,7 +46,13 @@ router.get("/products", async (req, res) => {
 router.get("/products/:id", async (req, res) => {
   try {
     const product = await Product.findByPk(req.params.id, {
-      include: ["seller"],
+      include: [
+        {
+          model: require("../models").User,
+          as: "User",
+          attributes: ["id", "name", "email"],
+        },
+      ],
     });
 
     if (!product) {
@@ -44,12 +60,16 @@ router.get("/products/:id", async (req, res) => {
     }
 
     const productData = product.toJSON();
-    if (product.imageKey) {
-      productData.imageUrl = await s3Service.getSignedUrl(product.imageKey);
+    if (productData.imageKey) {
+      productData.imageUrl = await s3Service.getSignedUrl(productData.imageKey);
     }
+    // Rename User to seller for frontend compatibility
+    productData.seller = productData.User;
+    delete productData.User;
 
     res.json(productData);
   } catch (error) {
+    console.error("Error fetching product:", error);
     res.status(500).json({ error: error.message });
   }
 });

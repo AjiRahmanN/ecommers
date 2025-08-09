@@ -2,9 +2,8 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
 const { encrypt, decrypt } = require("../utils/crypto");
-const validator = require("validator");
-
 const bcrypt = require("bcryptjs");
+
 const SALT_ROUNDS = 10;
 
 router.post("/register", async (req, res) => {
@@ -12,16 +11,20 @@ router.post("/register", async (req, res) => {
     const { name, email, password, address, phone, creditCard, cvv, isAdmin } = req.body;
 
     // Validate email format
-    if (!email || !validator.isEmail(email)) {
+    if (!email || !email.includes("@")) {
       return res.status(400).json({ error: "Please provide a valid email address" });
     }
 
     // Check if email already exists
     const existingUsers = await User.findAll();
     for (const user of existingUsers) {
-      const decryptedEmail = await decrypt(user.email);
-      if (decryptedEmail === email) {
-        return res.status(400).json({ error: "Email already registered" });
+      try {
+        const decryptedEmail = await decrypt(user.email);
+        if (decryptedEmail === email) {
+          return res.status(400).json({ error: "Email already registered" });
+        }
+      } catch (decryptError) {
+        continue;
       }
     }
 

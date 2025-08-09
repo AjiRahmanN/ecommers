@@ -49,8 +49,10 @@ sequelize
     return sequelize.sync({ alter: true });
   })
   .then(() => {
-    app.listen(PORT, "0.0.0.0", () => console.log(`Server running on port ${process.env.PORT}`));
+    app.listen(3000, "0.0.0.0", () => console.log(`Server running on port ${process.env.PORT}`));
   })
   .catch((err) => {
     console.error("Unable to connect to the database:", err);
   });
+
+  

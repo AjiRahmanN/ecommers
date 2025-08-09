@@ -9,6 +9,7 @@ const productRoutes = require("./routes/product");
 const checkoutRoutes = require("./routes/checkout");
 const adminRoutes = require("./routes/admin");
 
+const PORT = process.env.PORT || 3000;
 const app = express();
 
 // Configure CORS to allow requests from fronten
@@ -48,7 +49,7 @@ sequelize
     return sequelize.sync({ alter: true });
   })
   .then(() => {
-    app.listen(process.env.PORT, "0.0.0.0", () => console.log(`Server running on port ${process.env.PORT}`));
+    app.listen(PORT, "0.0.0.0", () => console.log(`Server running on port ${process.env.PORT}`));
   })
   .catch((err) => {
     console.error("Unable to connect to the database:", err);

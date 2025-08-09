@@ -3,7 +3,7 @@
     <h1>Produk Kami</h1>
     <div class="products-grid">
       <div class="product-card" v-for="product in products" :key="product._id">
-        <img :src="product.image || 'https://via.placeholder.com/150'" alt="product.name" class="product-image" />
+        <img :src="product.imageUrl || 'https://via.placeholder.com/150'" alt="product.name" class="product-image" />
         <h3 class="product-name">{{ product.name }}</h3>
         <p class="product-price">Rp{{ product.price.toLocaleString() }}</p>
         <button class="add-to-cart-btn">Add to Cart</button>

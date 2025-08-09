@@ -12,20 +12,19 @@ router.post("/register", async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
-    const user = new User({
+    const user = await User.create({
       name: await encrypt(name),
-      email,
+      email: await encrypt(email),
       password: hashedPassword,
-      address: await encrypt(address),
-      phone: await encrypt(phone),
-      creditCard: await encrypt(creditCard),
-      cvv: await encrypt(cvv),
+      address: await encrypt(address || ""),
+      phone: await encrypt(phone || ""),
+      creditCard: await encrypt(creditCard || ""),
+      cvv: await encrypt(cvv || ""),
       history: [],
       isAdmin: isAdmin || false,
     });
 
-    await user.save();
-    res.status(201).json({ message: "User saved securely" });
+    res.status(201).json({ message: "User saved securely", userId: user.id });
   } catch (error) {
     console.error("Registration error:", error);
     res.status(500).json({ error: error.message || "Registration failed" });

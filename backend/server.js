@@ -12,10 +12,10 @@ const adminRoutes = require("./routes/admin");
 const PORT = process.env.PORT || 3000;
 const app = express();
 
-// Configure CORS to allow requests from fronten
+// Configure CORS to allow requests from frontend
 app.use(
   cors({
-    origin: ["http://3.106.138.75", "http://localhost:3000", "http://localhost:3000"],
+    origin: ["http://3.106.138.75", "http://localhost:3000", "http://localhost:5173"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -35,6 +35,12 @@ app.use((req, res, next) => {
   }
 });
 
+// Add error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: "Something went wrong!" });
+});
+
 app.use(bodyParser.json());
 app.use("/api", userRoutes);
 app.use("/api/auth", authRoutes);
@@ -49,10 +55,8 @@ sequelize
     return sequelize.sync({ alter: true });
   })
   .then(() => {
-    app.listen(3000, "0.0.0.0", () => console.log(`Server running on port ${process.env.PORT}`));
+    app.listen(PORT, "0.0.0.0", () => console.log(`Server running on port ${PORT}`));
   })
   .catch((err) => {
     console.error("Unable to connect to the database:", err);
   });
-
-// sda
